@@ -1,0 +1,464 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+<xacro:macro name="left_hand">
+
+<!-- Defining the colors used in this robot -->
+    <material name="white">
+        <color rgba="1 1 1 0.9"/>
+    </material>
+
+    <material name="yellow">
+        <color rgba="1 0.4 0 1"/>
+    </material>
+
+    <material name="gray">
+        <color rgba="0.75 0.75 0.75 1"/>
+    </material>
+
+    <material name="black">
+        <color rgba="0.75 0.75 0.75 1"/>
+    </material>
+
+    <!-- PROPERTY LIST -->
+    <xacro:property name="M_PI" value="3.1415926535897931" />
+    <!-- ratio scale -->
+    <xacro:property name="ratio_scale" value="0.55"/>
+
+    <!-- Main body length, width, height and mass -->
+    <xacro:property name="base_link_position" value="${0.005*ratio_scale}"/>
+    <xacro:property name="base_link_x" value="${0.11*ratio_scale}" />
+    <xacro:property name="base_link_y" value="${0.10*ratio_scale}"/>
+    <xacro:property name="base_link_z" value="${0.032*ratio_scale}"/>
+    <xacro:property name="base_link_mass" value="${1.0*ratio_scale}"/>
+    <!-- Caster radius and mass -->
+    <xacro:property name="finger_width"                   value="${0.022*ratio_scale}" />
+    <xacro:property name="finger_thickness"               value="${0.011*ratio_scale}" />
+    <xacro:property name="finger_down"                    value="${0.0551*ratio_scale}" />
+    <xacro:property name="finger_mid"                     value="${0.03775*ratio_scale}"/>
+    <xacro:property name="finger_top"                     value="${0.02294*ratio_scale}" />
+    <xacro:property name="finger_down"                    value="${0.0551*ratio_scale}" />
+    <xacro:property name="finger_zhongzhi_mid"            value="${0.04905*ratio_scale}" />
+    <xacro:property name="finger_zhongzhi_top"            value="${0.027489*ratio_scale}"/>
+    <xacro:property name="finger_down_mass"               value="${0.04217*ratio_scale}"/>
+    <xacro:property name="finger_mid_mass"                value="${0.03053*ratio_scale}"/>
+    <xacro:property name="finger_top_mass"                value="${0.02548*ratio_scale}"/>
+    <xacro:property name="finger_zhongzhi_mid_mass"       value="${0.03816*ratio_scale}"/>
+    <xacro:property name="finger_zhongzhi_top_mass"       value="${0.02386*ratio_scale}"/>
+    <xacro:property name="hand_big_thumb_1_mass"          value="${0.004304*ratio_scale}"/>
+    <xacro:property name="hand_big_thumb_1_radius"        value="${0.005*ratio_scale}"/>
+    <xacro:property name="hand_big_thumb_1_length"        value="${0.020*ratio_scale}"/>
+    <xacro:property name="hand_zhuanjie_1_mass"           value="${0.0008867*ratio_scale}"/>
+    <xacro:property name="hand_zhuanjie_1_x"              value="${0.005*ratio_scale}"/>
+    <xacro:property name="hand_zhuanjie_1_y"              value="${0.004*ratio_scale}"/>
+    <xacro:property name="hand_zhuanjie_1_z"              value="${0.01*ratio_scale}"/>
+    <xacro:property name="hand_zhuanjie_2_mass"           value="${0.0704*ratio_scale}"/>
+    <xacro:property name="hand_zhuanjie_2_x"              value="${0.0525*ratio_scale}"/>
+    <xacro:property name="hand_zhuanjie_2_y"              value="${0.022*ratio_scale}"/>
+    <xacro:property name="hand_zhuanjie_2_z"              value="${0.02225*ratio_scale}"/>
+    <xacro:property name="hand_big_thumb_2_mass"           value="${0.038357*ratio_scale}"/>
+    <xacro:property name="hand_big_thumb_2_x"              value="${0.04935*ratio_scale}"/>
+    <xacro:property name="hand_big_thumb_2_y"              value="${0.022*ratio_scale}"/>
+    <xacro:property name="hand_big_thumb_2_z"              value="${0.011*ratio_scale}"/>
+    <xacro:property name="hand_big_thumb_3_mass"           value="${0.027218*ratio_scale}"/>
+    <xacro:property name="hand_big_thumb_3_x"              value="${0.03255*ratio_scale}"/>
+    <xacro:property name="hand_big_thumb_3_y"              value="${0.022*ratio_scale}"/>
+    <xacro:property name="hand_big_thumb_3_z"              value="${0.011*ratio_scale}"/>
+
+    <!-- Macro for inertia matrix -->
+    <xacro:macro name="sphere_inertial_matrix" params="m r">
+        <inertial>
+            <mass value="${m}" />
+            <inertia ixx="${2*m*r*r/5}" ixy="0" ixz="0"
+                iyy="${2*m*r*r/5}" iyz="0"
+                izz="${2*m*r*r/5}" />
+        </inertial>
+    </xacro:macro>
+
+    <xacro:macro name="cylinder_inertial_matrix" params="m r h">
+        <inertial>
+            <mass value="${m}" />
+            <inertia ixx="${m*(3*r*r+h*h)/12}" ixy = "0" ixz = "0"
+                iyy="${m*(3*r*r+h*h)/12}" iyz = "0"
+                izz="${m*r*r/2}" />
+        </inertial>
+    </xacro:macro>
+
+    <xacro:macro name="box_inertial_matrix" params="m w h d">
+        <inertial>
+            <mass value="${m}" />
+            <inertia ixx="${m*(h*h+d*d)/12}" ixy = "0" ixz = "0"
+                iyy="${m*(w*w+d*d)/12}" iyz = "0"
+                izz="${m*(w*w+h*h)/12}" />
+        </inertial>
+    </xacro:macro>
+
+      <!-- Define finger -->
+    <xacro:macro name="left_hand_finger" params="parent number prefix_1 prefix_2 prefix_3 joint_x_loc joint_y_loc joint_z_loc joint_roll_ang joint_pitch_ang joint_yaw_ang finger_length_1 finger_length_2 finger_length_3 finger_1_mass finger_2_mass finger_3_mass">
+        <joint name="left_hand_finger_${number}_joint" type="revolute">
+            <origin xyz="${joint_x_loc} ${joint_y_loc} ${joint_z_loc}" rpy="${joint_roll_ang} ${joint_pitch_ang} ${joint_yaw_ang}" />
+            <parent link="${parent}"/>
+            <child link="left_hand_finger_${prefix_1}_link" />
+            <axis xyz="1 0 0"/>
+            <limit effort ="30" lower="0" upper= "${M_PI/2}" velocity="0.5"/>
+        </joint>
+
+         <transmission name="left_hand_finger_${number}_joint_trans">
+            <type>transmission_interface/SimpleTransmission</type>
+            <joint name="left_hand_finger_${number}_joint" >
+                 <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            </joint>
+            <actuator name="left_hand_finger_${number}_joint_motor">
+                <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+                <mechanicalReduction>1</mechanicalReduction>
+            </actuator>
+        </transmission>
+
+        <link name="left_hand_finger_${prefix_1}_link">
+            <visual>
+                <origin xyz="0 ${-0.0045*ratio_scale} ${finger_length_1/2}  " rpy="0 0 0" />
+                <geometry>
+                    <box size="${finger_width} ${finger_thickness} ${finger_length_1}"/>
+                </geometry>
+                <material name="gray"/>
+            </visual>
+            <collision>
+                <origin xyz="0 ${-0.0045*ratio_scale} ${finger_length_1/2}" rpy="0 0 0 " />
+                <geometry>
+                     <box size="${finger_width} ${finger_thickness} ${finger_length_1}"/>
+                </geometry>
+            </collision>
+            <xacro:box_inertial_matrix  m="${finger_1_mass}" w="${finger_width}" h="${finger_thickness}" d="${finger_length_1}" />
+          </link>
+        <gazebo reference="left_hand_finger_${prefix_1}_link">
+            <material>Gazebo/Red</material>
+            <gravity>true</gravity>
+        </gazebo>
+
+        <joint name = "left_hand_finger_${prefix_2}_joint" type = "revolute">
+            <origin xyz = "0 ${-0.0045*ratio_scale} ${finger_length_1}" rpy = "0 0 0" />
+            <parent link  = "left_hand_finger_${prefix_1}_link" />
+            <child link = "left_hand_finger_${prefix_2}_link" />
+            <axis xyz = "1 0 0"/>
+            <limit effort ="30" lower="0" upper= "${M_PI/2}" velocity="0.5"/>
+        </joint>
+
+        <transmission name="left_hand_finger_${prefix_2}_joint_trans">
+            <type>transmission_interface/SimpleTransmission</type>
+             <joint name="left_hand_finger_${prefix_2}_joint" >
+                 <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            </joint>
+            <actuator name="left_hand_finger_${prefix_2}_joint_motor">
+                 <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+                <mechanicalReduction>1</mechanicalReduction>
+            </actuator>
+        </transmission>
+
+        <link name="left_hand_finger_${prefix_2}_link">
+            <visual>
+                <origin xyz="0 0 ${finger_length_2/2}  " rpy="0 0 0" />
+                <geometry>
+                    <box size="${finger_width} ${finger_thickness} ${finger_length_2}"/>
+                </geometry>
+                <material name="white"/>
+            </visual>
+        <collision>
+                <origin xyz="0 0 ${finger_length_2/2}" rpy="0 0 0 " />
+                <geometry>
+                     <box size="${finger_width} ${finger_thickness} ${finger_length_2}"/>
+                </geometry>
+            </collision>
+            <xacro:box_inertial_matrix  m="${finger_2_mass}" w="${finger_width}" h="${finger_thickness}" d="${finger_length_2}" />
+          </link>
+         <gazebo reference="left_hand_finger_${prefix_2}_link">
+            <material>Gazebo/White</material>
+            <gravity>true</gravity>
+        </gazebo>
+
+        <joint name = "left_hand_finger_${prefix_3}_joint" type = "revolute">
+            <origin xyz = "0 0 ${finger_length_2}" rpy = "0 0 0" />
+            <parent link  = "left_hand_finger_${prefix_2}_link" />
+            <child link = "left_hand_finger_${prefix_3}_link" />
+            <axis xyz = "1 0 0"/>
+            <limit effort ="30" lower="0" upper= "${M_PI/2}" velocity="0.5"/>
+        </joint>
+
+        <transmission name="left_hand_finger_${prefix_3}_joint_trans">
+            <type>transmission_interface/SimpleTransmission</type>
+            <joint name="left_hand_finger_${prefix_3}_joint" >
+                 <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            </joint>
+            <actuator name="left_hand_finger_${prefix_3}_joint_motor">
+                 <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+                <mechanicalReduction>1</mechanicalReduction>
+            </actuator>
+        </transmission>
+
+        <link name="left_hand_finger_${prefix_3}_link">
+            <visual>
+                <origin xyz="0 0 ${finger_length_3/2}  " rpy="0 0 0" />
+                <geometry>
+                    <box size="${finger_width} ${finger_thickness} ${finger_length_3}"/>
+                </geometry>
+                <material name="yellow"/>
+            </visual>
+        <collision>
+                <origin xyz="0 0 ${finger_length_3/2}" rpy="0 0 0 " />
+                <geometry>
+                     <box size="${finger_width} ${finger_thickness} ${finger_length_3}"/>
+                </geometry>
+            </collision>
+            <xacro:box_inertial_matrix  m="${finger_3_mass}" w="${finger_width}" h="${finger_thickness}" d="${finger_length_3}" />
+          </link>
+      <gazebo reference="left_hand_finger_${prefix_3}_link">
+            <material>Gazebo/Blue</material>
+            <gravity>true</gravity>
+      </gazebo>
+    </xacro:macro>
+
+    <!-- Define base_link -->
+    <link name = "bottom_link">
+        <visual>
+            <origin xyz = "-${0.005*ratio_scale} -${0.005*ratio_scale} -${0.06*ratio_scale}" rpy = "0 0 0" />
+            <geometry>
+                <box size="${0.10*ratio_scale} ${0.032*ratio_scale} ${0.02*ratio_scale}" />
+            </geometry>
+            <material name = "white"/>
+         </visual>
+         <collision>
+                 <origin xyz="-${0.005*ratio_scale} -${0.005*ratio_scale} -${0.06*ratio_scale}" rpy="0 0 0 " />
+                 <geometry>
+                      <box size="${0.10*ratio_scale} ${0.032*ratio_scale} ${0.02*ratio_scale}"/>
+                 </geometry>
+             </collision>
+          <xacro:box_inertial_matrix  m="${500*ratio_scale}" w="${1*ratio_scale}" h="${1*ratio_scale}" d="${0.02*ratio_scale}" />
+     </link>
+    <gazebo reference="bottom_link">
+             <material>Gazebo/White</material>
+             <gravity>true</gravity>
+    </gazebo>
+
+   <joint name="fixed" type="fixed">
+     <parent link="left_base_link"/>
+     <child link="bottom_link"/>
+   </joint>
+
+   <link name = "left_base_link">
+       <visual>
+           <origin xyz = "${base_link_position} -${base_link_position} 0.0" rpy = "1.57 0 0" />
+           <geometry>
+               <box size="${base_link_x} ${base_link_y} ${base_link_z}" />
+           </geometry>
+           <material name = "yellow"/>
+        </visual>
+        <collision>
+                <origin xyz="${base_link_position} -${base_link_position} 0" rpy="1.57 0 0 " />
+                <geometry>
+                     <box size="${base_link_x} ${base_link_y} ${base_link_z}"/>
+                </geometry>
+            </collision>
+         <xacro:box_inertial_matrix  m="${base_link_mass}" w="${base_link_x}" h="${base_link_y}" d="${base_link_z}" />
+    </link>
+   <gazebo reference="left_base_link">
+            <material>Gazebo/Yellow</material>
+            <gravity>true</gravity>
+   </gazebo>
+
+ <!-- Define base_hand_big_thunb -->
+
+  <joint name = "left_base_hand_big_thumb_1" type = "revolute">
+         <origin xyz = "${-0.006*ratio_scale} ${-0.0011*ratio_scale} ${-0.02785*ratio_scale}" rpy = "0 0 0" />
+         <parent link  = "left_base_link" />
+         <child link = "left_hand_big_thumb_1" />
+         <axis xyz = "0 0 1"/>
+         <limit effort ="30" lower="0" upper= "${M_PI/2}" velocity="0.5"/>
+  </joint>
+
+  <transmission name="left_base_hand_big_thumb_1_trans">
+            <type>transmission_interface/SimpleTransmission</type>
+             <joint name="left_base_hand_big_thumb_1" >
+                 <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            </joint>
+            <actuator name="left_base_hand_big_thumb_1_joint_motor">
+                <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+                <mechanicalReduction>1</mechanicalReduction>
+            </actuator>
+        </transmission>
+
+ <link name = "left_hand_big_thumb_1">
+       <visual>
+           <origin xyz = "-${hand_big_thumb_1_length/2} 0 0" rpy = "0 1.57 0" />
+           <geometry>
+               <cylinder radius = "${hand_big_thumb_1_radius}" length = "${hand_big_thumb_1_length}"/>
+           </geometry>
+           <material name = "gray"/>
+        </visual>
+        <collision>
+                <origin xyz="-${hand_big_thumb_1_length/2} 0 0" rpy="0 1.57 0 " />
+                <geometry>
+                      <cylinder radius = "${hand_big_thumb_1_radius}" length = "${hand_big_thumb_1_length}"/>
+                </geometry>
+            </collision>
+            <xacro:cylinder_inertial_matrix  m="${hand_big_thumb_1_mass}" r="${hand_big_thumb_1_radius}" h="${hand_big_thumb_1_length}"  />
+    </link>
+    <gazebo reference="left_hand_big_thunb_1">
+            <material>Gazebo/Grey</material>
+            <gravity>true</gravity>
+    </gazebo>
+
+<joint name = "left_base_zhuanjie_1" type = "fixed">
+         <origin xyz = "-${hand_big_thumb_1_length} 0 0" rpy = "0 0.087222 0" />
+         <parent link  = "left_hand_big_thumb_1" />
+         <child link = "left_hand_zhuanjie_1" />
+  </joint>
+
+ <link name = "left_hand_zhuanjie_1">
+       <visual>
+           <origin xyz = "-${hand_big_thumb_1_radius/2} 0 0" rpy = "0 0 0" />
+           <geometry>
+               <box size = "${hand_zhuanjie_1_x} ${hand_zhuanjie_1_y} ${hand_zhuanjie_1_z}"/>
+           </geometry>
+           <material name = "black"/>
+        </visual>
+        <collision>
+                <origin xyz="-${hand_big_thumb_1_radius/2} 0 0" rpy="0 0 0 " />
+                <geometry>
+                       <box size = "${hand_zhuanjie_1_x} ${hand_zhuanjie_1_y} ${hand_zhuanjie_1_z}"/>
+                </geometry>
+            </collision>
+            <xacro:box_inertial_matrix  m="${hand_zhuanjie_1_mass}" w="${hand_zhuanjie_1_x}" h="${hand_zhuanjie_1_y}" d="${hand_zhuanjie_1_z}"  />
+    </link>
+    <gazebo reference="left_hand_zhuanjie_1">
+            <material>Gazebo/Black</material>
+            <gravity>true</gravity>
+    </gazebo>
+
+<joint name = "left_base_zhuanjie_2" type = "fixed">
+         <origin xyz = "-${hand_zhuanjie_1_x} 0 0" rpy = "0 0 0" />
+         <parent link  = "left_hand_zhuanjie_1" />
+         <child link = "left_hand_zhuanjie_2" />
+  </joint>
+
+<link name = "left_hand_zhuanjie_2">
+       <visual>
+           <origin xyz = "-${hand_zhuanjie_2_x/2} ${hand_zhuanjie_2_y/2} -${hand_zhuanjie_2_z/2}" rpy = "0 0 0" />
+           <geometry>
+               <box size = "${hand_zhuanjie_2_x} ${hand_zhuanjie_2_y} ${hand_zhuanjie_2_z}"/>
+           </geometry>
+           <material name = "black"/>
+         </visual>
+         <collision>
+                <origin xyz="-${hand_zhuanjie_2_x/2} ${hand_zhuanjie_2_y/2} -${hand_zhuanjie_2_z/2}" rpy="0 0 0 " />
+                <geometry>
+                       <box size = "${hand_zhuanjie_2_x} ${hand_zhuanjie_2_y} ${hand_zhuanjie_2_z}"/>
+                </geometry>
+            </collision>
+            <xacro:box_inertial_matrix  m="${hand_zhuanjie_2_mass}" w="${hand_zhuanjie_2_x}" h="${hand_zhuanjie_2_y}" d="${hand_zhuanjie_2_z}"  />
+    </link>
+    <gazebo reference="left_hand_zhuanjie_2">
+            <material>Gazebo/Black</material>
+            <gravity>true</gravity>
+    </gazebo>
+
+
+  <joint name = "left_base_hand_big_thumb_2" type = "revolute">
+         <origin xyz = "-${hand_zhuanjie_2_x} ${hand_zhuanjie_2_y/2} ${-0.0055*ratio_scale}" rpy = "0 0 0" />
+         <parent link  = "left_hand_zhuanjie_2" />
+         <child link = "left_hand_big_thumb_2" />
+         <axis xyz = "0 1 0"/>
+         <limit effort ="30" lower="0" upper= "${M_PI/2}" velocity="0.5"/>
+  </joint>
+
+  <transmission name="left_base_hand_big_thumb_2_trans">
+            <type>transmission_interface/SimpleTransmission</type>
+           <joint name="left_base_hand_big_thumb_2" >
+                 <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            </joint>
+            <actuator name="left_base_hand_big_thumb_2_joint_motor">
+               <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+                <mechanicalReduction>1</mechanicalReduction>
+            </actuator>
+        </transmission>
+
+   <link name = "left_hand_big_thumb_2">
+       <visual>
+           <origin xyz = "-${hand_big_thumb_2_x/2} 0 0" rpy = "0 0 0" />
+           <geometry>
+               <box size = "${hand_big_thumb_2_x} ${hand_big_thumb_2_y} ${hand_big_thumb_2_z}"/>
+           </geometry>
+           <material name = "white"/>
+        </visual>
+        <collision>
+                <origin xyz="-${hand_big_thumb_2_x/2} 0 0" rpy="0 0 0 " />
+                <geometry>
+                       <box size = "${hand_big_thumb_2_x} ${hand_big_thumb_2_y} ${hand_big_thumb_2_z}"/>
+                </geometry>
+            </collision>
+            <xacro:box_inertial_matrix  m="${hand_big_thumb_2_mass}" w="${hand_big_thumb_2_x}" h="${hand_big_thumb_2_y}" d="${hand_big_thumb_2_z}"  />
+    </link>
+    <gazebo reference="left_hand_big_thumb_2">
+            <material>Gazebo/Red</material>
+            <gravity>true</gravity>
+    </gazebo>
+
+  <link name = "left_hand_big_thumb_3">
+       <visual>
+           <origin xyz = "-${hand_big_thumb_3_x/2} 0 0" rpy = "0 0 0"/>
+           <geometry>
+               <box size = "${hand_big_thumb_3_x} ${hand_big_thumb_3_y} ${hand_big_thumb_3_z}"/>
+           </geometry>
+          <material name = "yellow"/>
+        </visual>
+       <collision>
+                <origin xyz="-${hand_big_thumb_3_x/2} 0 0" rpy="0 0 0 " />
+                <geometry>
+                       <box size = "${hand_big_thumb_3_x} ${hand_big_thumb_3_y} ${hand_big_thumb_3_z}"/>
+                </geometry>
+            </collision>
+            <xacro:box_inertial_matrix  m="${hand_big_thumb_3_mass}" w="${hand_big_thumb_3_x}" h="${hand_big_thumb_3_y}" d="${hand_big_thumb_3_z}"/>
+    </link>
+    <gazebo reference="left_hand_big_thumb_3">
+            <material>Gazebo/Green</material>
+            <gravity>true</gravity>
+    </gazebo>
+
+  <joint name = "left_base_hand_big_thumb_3" type = "revolute">
+         <origin xyz = "-${hand_big_thumb_2_x} 0 0" rpy = "0 0 0" />
+         <parent link  = "left_hand_big_thumb_2" />
+         <child link = "left_hand_big_thumb_3" />
+         <axis xyz = "0 1 0"/>
+         <limit effort ="30" lower="0" upper= "${M_PI/2}" velocity="0.5"/>
+  </joint>
+
+ <transmission name="left_base_hand_big_thumb_3_trans">
+            <type>transmission_interface/SimpleTransmission</type>
+            <joint name="left_base_hand_big_thumb_3" >
+                 <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            </joint>
+            <actuator name="left_base_hand_big_thumb_3_joint_motor">
+                <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+                <mechanicalReduction>1</mechanicalReduction>
+            </actuator>
+        </transmission>
+
+ <!-- shizhi -->
+ <xacro:left_hand_finger parent="left_base_link" number="1" prefix_1 = "shizhidown" prefix_2 = "shizhimid" prefix_3 = "shizhitop" joint_x_loc="${-0.037613*ratio_scale}" joint_y_loc="${-0.0025*ratio_scale}" joint_z_loc="${0.045947*ratio_scale}" joint_roll_ang = "0" joint_pitch_ang = "-0.06105556" joint_yaw_ang = "0.052333" finger_length_1 = "${finger_down}" finger_length_2 = "${finger_mid}" finger_length_3 = "${finger_top}" finger_1_mass="${finger_down_mass}" finger_2_mass="${finger_mid_mass}" finger_3_mass="${finger_top_mass}" />
+ <!-- zhongzhi -->
+ <xacro:left_hand_finger parent="left_base_link" number="2" prefix_1 = "zhongzhidown" prefix_2 = "zhongzhimid" prefix_3 = "zhongzhitop" joint_x_loc="${-0.01*ratio_scale}" joint_y_loc="${0.0*ratio_scale}" joint_z_loc="${0.05*ratio_scale}" joint_roll_ang = "0" joint_pitch_ang = "0" joint_yaw_ang = "0" finger_length_1 = "${finger_down}" finger_length_2 = "${finger_zhongzhi_mid}" finger_length_3 = "${finger_zhongzhi_top}" finger_1_mass="${finger_down_mass}"
+finger_2_mass="${finger_zhongzhi_mid_mass}" finger_3_mass="${finger_zhongzhi_top_mass}"/>
+ <!-- wumingzhi -->
+<xacro:left_hand_finger parent="left_base_link" number="3" prefix_1 = "wumingzhidown" prefix_2 = "wumingzhimid" prefix_3 = "wumingzhitop" joint_x_loc="${0.017613*ratio_scale}" joint_y_loc="${-0.0025*ratio_scale}" joint_z_loc="${0.045947*ratio_scale}" joint_roll_ang = "0" joint_pitch_ang = "0.06105556" joint_yaw_ang = "-0.0523333" finger_length_1 = "${finger_down}" finger_length_2 = "${finger_mid}" finger_length_3 = "${finger_top}" finger_1_mass="${finger_down_mass}" finger_2_mass="${finger_mid_mass}" finger_3_mass="${finger_top_mass}"/>
+ <!-- xiaozhi -->
+<xacro:left_hand_finger parent="left_base_link" number="4" prefix_1 = "xiaozhidown" prefix_2 = "xiaozhimid" prefix_3 = "xiaozhitop" joint_x_loc="${0.044301*ratio_scale}" joint_y_loc="${-0.0070*ratio_scale}" joint_z_loc="${0.039976*ratio_scale}" joint_roll_ang = "0" joint_pitch_ang = "0.13955556" joint_yaw_ang = "-0.1046667" finger_length_1 = "${finger_down}" finger_length_2 = "${finger_mid}" finger_length_3 = "${finger_top}" finger_1_mass="${finger_down_mass}" finger_2_mass="${finger_mid_mass}" finger_3_mass="${finger_top_mass}"/>
+
+<!--ros_control-->
+<gazebo>
+   <plugin name= "gazebo_ros_controll" filename= "libgazebo_ros_control.so">
+       <robotNamespace>/left_robot_hand</robotNamespace>
+        <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+
+   </plugin>
+</gazebo>
+
+</xacro:macro>
+</robot>

@@ -1,0 +1,287 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro"
+       name="xarm6" >
+
+  <arg name="prefix" default=""/>
+  <arg name="ros_control_namespace" default="xarm"/>
+  <arg name="limited" default="false"/>
+  <arg name="effort_control" default="false"/>
+
+  <!-- common stuff -->
+  <xacro:include filename="$(find xarm_description)/urdf/common.gazebo.xacro" />
+
+  <!-- xarm6 -->
+  <xacro:include filename="$(find xarm_description)/urdf/xarm6.urdf.xacro" />
+  <xacro:include filename="$(find xarm_description)/urdf/xarm6.transmission.xacro" />
+  <xacro:include filename="$(find xarm_description)/urdf/xarm6.gazebo.xacro" />
+
+  <!--Import macro for right arm gripper-->
+	<xacro:include filename="$(find xarm_description)/urdf/right_hand_robot.urdf.xacro" />
+
+  <link name="$(arg prefix)link_b1">
+	<visual>
+		<origin rpy="0 0 0" xyz="0 0 0"/>
+		<geometry>
+			<!--<mesh filename="package://xarm_description/meshes/xarm6/visual/motoman_axis_b1.stl"/>-->
+      <box size="1.0 1.0 0.06"/>
+		</geometry>
+		<material name="silver">
+			<color rgba="0.8 0.8 0.8 1"/>
+		</material>
+	</visual>
+	<collision>
+		<origin rpy="0 0 0" xyz="0 0 0"/>
+		<geometry>
+			<!--<mesh filename="package://xarm_description/meshes/xarm6/collision/motoman_axis_b1.stl" />-->
+      <box size="1.0 1.0 0.06"/>
+		</geometry>
+		<material name="yellow"/>
+	</collision>
+	<inertial>
+       <mass value="6000.0" />
+       <origin rpy="0 0 0" xyz="0.05378 0.0000034 0.24362" />
+       <inertia ixx="4.132762" ixy="0.000011" ixz="0.943678" iyy="4.366928" iyz="0.000039" izz="0.697600" />
+  </inertial>
+</link>
+<gazebo reference="$(arg prefix)link_b1">
+	 <material>Gazebo/White</material>
+	 <gravity>true</gravity>
+</gazebo>
+
+  <link name="$(arg prefix)link_b2">
+	<visual>
+		<origin rpy="0 0 0" xyz="0 0 0"/>
+		<geometry>
+			<!--<mesh filename="package://xarm_description/meshes/xarm6/visual/motoman_axis_b1.stl"/>-->
+      <box size="0.1 0.2 1.22"/>
+		</geometry>
+		<material name="silver">
+			<color rgba="0.8 0.8 0.8 1"/>
+		</material>
+	</visual>
+	<collision>
+		<origin rpy="0 0 0" xyz="0 0 0"/>
+		<geometry>
+			<!--<mesh filename="package://xarm_description/meshes/xarm6/collision/motoman_axis_b1.stl" />-->
+      <box size="0.1 0.2 1.22"/>
+		</geometry>
+		<material name="yellow"/>
+	</collision>
+	<inertial>
+       <mass value="200.0" />
+       <origin rpy="0 0 0" xyz="0.05378 0.0000034 0.24362" />
+       <inertia ixx="4.132762" ixy="0.000011" ixz="0.943678" iyy="4.366928" iyz="0.000039" izz="0.697600" />
+  </inertial>
+</link>
+<gazebo reference="$(arg prefix)link_b2">
+	 <material>Gazebo/White</material>
+	 <gravity>true</gravity>
+</gazebo>
+
+
+ <link name="$(arg prefix)link_b3">
+	<visual>
+		<origin rpy="0 0 0" xyz="0 0 0"/>
+		<geometry>
+			<!--<mesh filename="package://xarm_description/meshes/xarm6/visual/motoman_axis_b1.stl"/>-->
+      <box size="0.12 0.3 0.12"/>
+		</geometry>
+		<material name="silver">
+			<color rgba="0.8 0.8 0.8 1"/>
+		</material>
+	</visual>
+	<collision>
+		<origin rpy="0 0 0" xyz="0 0 0"/>
+		<geometry>
+			<!--<mesh filename="package://xarm_description/meshes/xarm6/collision/motoman_axis_b1.stl" />-->
+      <box size="0.12 0.3 0.12"/>
+		</geometry>
+		<material name="yellow"/>
+	</collision>
+	<inertial>
+       <mass value="10.0" />
+       <origin rpy="0 0 0" xyz="0.05378 0.0000034 0.24362" />
+       <inertia ixx="4.132762" ixy="0.000011" ixz="0.943678" iyy="4.366928" iyz="0.000039" izz="0.697600" />
+  </inertial>
+</link>
+<gazebo reference="$(arg prefix)link_b3">
+	 <material>Gazebo/White</material>
+	 <gravity>true</gravity>
+</gazebo>
+
+  <!-- arm -->
+  <xacro:gazebo_ros_control_plugin namespace="$(arg ros_control_namespace)"/>
+
+  <xacro:if value="$(arg limited)">
+    <xacro:xarm6_urdf prefix="$(arg prefix)"
+      joint1_lower_limit="${-pi*0.99}" joint1_upper_limit="${pi*0.99}"
+      joint2_lower_limit="${-2.18}" joint2_upper_limit="${2.18}"
+      joint3_lower_limit="${-pi*0.99}" joint3_upper_limit="${0.11}"
+      joint4_lower_limit="${-pi*0.99}" joint4_upper_limit="${pi*0.99}"
+      joint5_lower_limit="${-1.75}" joint5_upper_limit="${pi*0.99}"
+      joint6_lower_limit="${-pi*0.99}" joint6_upper_limit="${pi*0.99}"/>
+  </xacro:if>
+  <xacro:unless value="$(arg limited)">
+    <xacro:xarm6_urdf prefix="$(arg prefix)"/>
+  </xacro:unless>
+
+  <xacro:if value="$(arg effort_control)">
+    <xacro:xarm6_transmission prefix="$(arg prefix)" hard_interface="EffortJointInterface" />
+  </xacro:if>
+  <xacro:unless value="$(arg effort_control)">
+    <xacro:xarm6_transmission prefix="$(arg prefix)" hard_interface="PositionJointInterface" />
+  </xacro:unless>
+
+  <xacro:xarm6_gazebo prefix="$(arg prefix)" />
+
+  <xacro:right_hand />
+
+  <joint name="right_gripper_to_robot_joint" type="fixed">
+		<parent link="$(arg prefix)link6" />
+		<child link="right_base_link"/>
+		<origin xyz="0.005 0.0 0.036"  rpy= "0 0 ${-pi/2}" />
+		<axis xyz="0 0 1"/>
+  </joint>
+
+  <!--Define the TCP of the grippers -->
+	<link name="arm_right_link_tcp" />
+
+	<joint name="arm_right_joint_tcp" type="fixed" >
+			<origin xyz="0.0 -0.025 0.01" rpy="${pi/2} 0 0"/>
+			<parent link="right_base_link" />
+			<child link="arm_right_link_tcp" />
+	</joint>
+
+
+<joint name="base_fix_torso" type="fixed">
+	<parent link="$(arg prefix)link_b1"/>
+	<child link="$(arg prefix)link_b2"/>
+	<origin xyz="0 0 0.65" rpy="0 0 0"/>
+</joint>
+
+<joint name="base_fix_torso2" type="fixed">
+	<parent link="$(arg prefix)link_b2"/>
+	<child link="$(arg prefix)link_b3"/>
+	<origin xyz="0 0 0.55" rpy="0 0 0"/>
+</joint>
+
+<joint name="arm_fix_torso" type="fixed">
+	<parent link="$(arg prefix)link_b3"/>
+	<child link="$(arg prefix)link_base"/>
+	<origin xyz="0 -0.15 0" rpy="${pi/2} 0 0"/>
+</joint>
+
+  <!--<link name="world" />
+  <joint name="world_joint" type="fixed">
+    <parent link="world" />
+    <child link = "$(arg prefix)link_b1" />
+    <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+  </joint>-->
+
+
+<!-- deepth camera -->
+<link name="camera_link0">
+	<visual>
+		<origin xyz=" 0 0 0 " rpy="0 0 0"/>
+		<geometry>
+			<cylinder radius="0.06" length="0.2"/>
+		</geometry>
+		<material name="blue">
+			<color rgba="0 0 1 1"/>
+		</material>
+	</visual>
+	<collision>
+		<origin xyz=" 0 0 0 " rpy="0 0 0"/>
+		<geometry>
+			<cylinder radius="0.065" length="0.22"/>
+		</geometry>
+		<material name="yellow"/>
+	</collision>
+	<inertial>
+            <mass value="1.0" />
+            <inertia ixx="0.0145583333333" ixy="0" ixz="0" iyy="0.0145583333333" iyz="0" izz="0.00245" />
+        </inertial>
+</link>
+<gazebo reference="camera_link0">
+	 <material>Gazebo/Blue</material>
+	 <gravity>true</gravity>
+</gazebo>
+
+<link name="camera_link">
+	<visual>
+		<origin xyz=" 0 0 0 " rpy="0 0 0"/>
+		<geometry>
+			<mesh filename="package://xarm_description/meshes/sensor/kinect.dae"/>
+		</geometry>
+		<material name="black">
+			<color rgba="0 0 0 0.95"/>
+		</material>
+	</visual>
+	<collision>
+		<origin xyz=" 0 0 0 " rpy="0 0 ${pi/2}"/>
+		<geometry>
+		  <box size="0.065 0.27 0.082"/>
+		</geometry>
+		<material name="yellow"/>
+	</collision>
+	<inertial>
+      <mass value="0.935" />
+      <inertia ixx="0.0053937" ixy="0" ixz="0" iyy="0.00085311" iyz="0" izz="0.00519899" />
+ </inertial>
+</link>
+<gazebo reference="camera_link">
+	 <material>Gazebo/Black</material>
+	 <gravity>true</gravity>
+</gazebo>
+
+<joint name="$base_fix_neck" type="fixed">
+	<parent link="$(arg prefix)link_b3"/>
+	<child link="camera_link0"/>
+	<origin xyz="0 0 0.1" rpy="0 0 0"/>
+</joint>
+
+<joint name="$neck_fix_camera" type="fixed">
+	<parent link="camera_link0"/>
+	<child link="camera_link"/>
+	<origin xyz="0.03 0 0.12" rpy="${pi/4} 0 ${pi/2}"/>
+</joint>
+
+<!--gazebo_camera-->
+<gazebo reference="camera_link">
+		<sensor type="depth" name="camera">
+				<always_on>true</always_on>
+				<update_rate>20.0</update_rate>
+				<camera>
+						<horizontal_fov>${60.0*pi/180.0}</horizontal_fov>
+						<image>
+								<format>R8G8B8</format>
+								<width>640</width>
+								<height>480</height>
+						</image>
+						<clip>
+								<near>0.05</near>
+								<far>8.0</far>
+						</clip>
+				</camera>
+				<plugin name="kinect_camera_controller" filename="libgazebo_ros_openni_kinect.so">
+						<cameraName>camera</cameraName>
+						<alwaysOn>true</alwaysOn>
+						<updateRate>10</updateRate>
+						<imageTopicName>rgb/image_raw</imageTopicName>
+						<depthImageTopicName>depth/image_raw</depthImageTopicName>
+						<pointCloudTopicName>depth/points</pointCloudTopicName>
+						<cameraInfoTopicName>rgb/camera_info</cameraInfoTopicName>
+						<depthImageCameraInfoTopicName>depth/camera_info</depthImageCameraInfoTopicName>
+						<frameName>camera_reference_link</frameName>
+						<baseline>0.1</baseline>
+						<distortion_k1>0.0</distortion_k1>
+						<distortion_k2>0.0</distortion_k2>
+						<distortion_k3>0.0</distortion_k3>
+						<distortion_t1>0.0</distortion_t1>
+						<distortion_t2>0.0</distortion_t2>
+						<pointCloudCutoff>0.4</pointCloudCutoff>
+				</plugin>
+		</sensor>
+</gazebo>
+
+</robot>
