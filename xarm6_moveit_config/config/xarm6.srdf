@@ -1,0 +1,322 @@
+<?xml version="1.0" ?>
+<!--This does not replace URDF, and is not an extension of URDF.
+    This is a format for representing semantic information about the robot structure.
+    A URDF file must exist for this robot as well, where the joints and the links that are referenced are defined
+-->
+<robot name="xarm6">
+    <!--GROUPS: Representation of a set of joints and links. This can be useful for specifying DOF to plan for, defining arms, end effectors, etc-->
+    <!--LINKS: When a link is specified, the parent joint of that link (if it exists) is automatically included-->
+    <!--JOINTS: When a joint is specified, the child link of that joint (which will always exist) is automatically included-->
+    <!--CHAINS: When a chain is specified, all the links along the chain (including endpoints) are included in the group. Additionally, all the joints that are parents to included links are also included. This means that joints along the chain and the parent joint of the base link are included in the group-->
+    <!--SUBGROUPS: Groups can also be formed by referencing to already defined group names-->
+    <group name="hand">
+        <joint name="right_base_hand_big_thumb_1" />
+        <joint name="right_base_hand_big_thumb_2" />
+        <joint name="right_base_hand_big_thumb_3" />
+        <joint name="right_hand_finger_1_joint" />
+        <joint name="right_hand_finger_shizhimid_joint" />
+        <joint name="right_hand_finger_shizhitop_joint" />
+        <joint name="right_hand_finger_2_joint" />
+        <joint name="right_hand_finger_zhongzhimid_joint" />
+        <joint name="right_hand_finger_zhongzhitop_joint" />
+        <joint name="right_hand_finger_3_joint" />
+        <joint name="right_hand_finger_wumingzhimid_joint" />
+        <joint name="right_hand_finger_wumingzhitop_joint" />
+        <joint name="right_hand_finger_4_joint" />
+        <joint name="right_hand_finger_xiaozhimid_joint" />
+        <joint name="right_hand_finger_xiaozhitop_joint" />
+    </group>
+    <group name="xarm6">
+        <joint name="joint1" />
+        <joint name="joint2" />
+        <joint name="joint3" />
+        <joint name="joint4" />
+        <joint name="joint5" />
+        <joint name="joint6" />
+        <!--<joint name="right_gripper_to_robot_joint" />-->
+        <joint name="arm_right_joint_tcp" />
+    </group>
+    <group name="arm">
+        <group name="xarm6" />
+        <group name="hand" />
+    </group>
+    <!--GROUP STATES: Purpose: Define a named state for a particular group, in terms of joint values. This is useful to define states like 'folded arms'-->
+    <group_state name="home" group="arm">
+        <joint name="joint1" value="0" />
+        <joint name="joint2" value="0" />
+        <joint name="joint3" value="0" />
+        <joint name="joint4" value="0" />
+        <joint name="joint5" value="0" />
+        <joint name="joint6" value="0" />
+        <joint name="right_base_hand_big_thumb_1" value="0" />
+        <joint name="right_base_hand_big_thumb_2" value="0" />
+        <joint name="right_base_hand_big_thumb_3" value="0" />
+        <joint name="right_hand_finger_1_joint" value="0" />
+        <joint name="right_hand_finger_2_joint" value="0" />
+        <joint name="right_hand_finger_3_joint" value="0" />
+        <joint name="right_hand_finger_4_joint" value="0" />
+        <joint name="right_hand_finger_shizhimid_joint" value="0" />
+        <joint name="right_hand_finger_shizhitop_joint" value="0" />
+        <joint name="right_hand_finger_wumingzhimid_joint" value="0" />
+        <joint name="right_hand_finger_wumingzhitop_joint" value="0" />
+        <joint name="right_hand_finger_xiaozhimid_joint" value="0" />
+        <joint name="right_hand_finger_xiaozhitop_joint" value="0" />
+        <joint name="right_hand_finger_zhongzhimid_joint" value="0" />
+        <joint name="right_hand_finger_zhongzhitop_joint" value="0" />
+    </group_state>
+    <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
+    <!--<end_effector name="arm_hand" parent_link="arm_right_link_tcp" group="hand" />-->
+    <end_effector name="gripper" parent_link="arm_right_link_tcp" group="hand" parent_group="xarm6" />
+    <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
+    <disable_collisions link1="bottom_link" link2="link3" reason="Never" />
+    <disable_collisions link1="bottom_link" link2="link5" reason="Never" />
+    <disable_collisions link1="bottom_link" link2="link6" reason="Never" />
+    <disable_collisions link1="bottom_link" link2="link_b1" reason="Never" />
+    <disable_collisions link1="bottom_link" link2="right_base_link" reason="Adjacent" />
+    <disable_collisions link1="bottom_link" link2="right_hand_big_thumb_1" reason="Never" />
+    <disable_collisions link1="bottom_link" link2="right_hand_big_thumb_2" reason="Never" />
+    <disable_collisions link1="bottom_link" link2="right_hand_big_thumb_3" reason="Never" />
+    <disable_collisions link1="bottom_link" link2="right_hand_finger_shizhidown_link" reason="Never" />
+    <disable_collisions link1="bottom_link" link2="right_hand_finger_shizhimid_link" reason="Never" />
+    <disable_collisions link1="bottom_link" link2="right_hand_finger_shizhitop_link" reason="Never" />
+    <disable_collisions link1="bottom_link" link2="right_hand_finger_wumingzhidown_link" reason="Never" />
+    <disable_collisions link1="bottom_link" link2="right_hand_finger_wumingzhimid_link" reason="Never" />
+    <disable_collisions link1="bottom_link" link2="right_hand_finger_wumingzhitop_link" reason="Never" />
+    <disable_collisions link1="bottom_link" link2="right_hand_finger_xiaozhidown_link" reason="Never" />
+    <disable_collisions link1="bottom_link" link2="right_hand_finger_xiaozhimid_link" reason="Never" />
+    <disable_collisions link1="bottom_link" link2="right_hand_finger_xiaozhitop_link" reason="Never" />
+    <disable_collisions link1="bottom_link" link2="right_hand_finger_zhongzhidown_link" reason="Never" />
+    <disable_collisions link1="bottom_link" link2="right_hand_finger_zhongzhimid_link" reason="Never" />
+    <disable_collisions link1="bottom_link" link2="right_hand_finger_zhongzhitop_link" reason="Never" />
+    <disable_collisions link1="bottom_link" link2="right_hand_zhuanjie_1" reason="Never" />
+    <disable_collisions link1="bottom_link" link2="right_hand_zhuanjie_2" reason="Never" />
+    <disable_collisions link1="camera_link" link2="camera_link0" reason="Adjacent" />
+    <disable_collisions link1="camera_link" link2="link1" reason="Never" />
+    <disable_collisions link1="camera_link" link2="link2" reason="Never" />
+    <disable_collisions link1="camera_link" link2="link_b1" reason="Never" />
+    <disable_collisions link1="camera_link" link2="link_b2" reason="Never" />
+    <disable_collisions link1="camera_link" link2="link_b3" reason="Never" />
+    <disable_collisions link1="camera_link" link2="link_base" reason="Never" />
+    <disable_collisions link1="camera_link0" link2="link1" reason="Never" />
+    <disable_collisions link1="camera_link0" link2="link2" reason="Never" />
+    <disable_collisions link1="camera_link0" link2="link_b1" reason="Never" />
+    <disable_collisions link1="camera_link0" link2="link_b2" reason="Default" />
+    <disable_collisions link1="camera_link0" link2="link_b3" reason="Adjacent" />
+    <disable_collisions link1="camera_link0" link2="link_base" reason="Never" />
+    <disable_collisions link1="link1" link2="link2" reason="Adjacent" />
+    <disable_collisions link1="link1" link2="link_b1" reason="Never" />
+    <disable_collisions link1="link1" link2="link_b2" reason="Never" />
+    <disable_collisions link1="link1" link2="link_b3" reason="Never" />
+    <disable_collisions link1="link1" link2="link_base" reason="Adjacent" />
+    <disable_collisions link1="link2" link2="link3" reason="Adjacent" />
+    <disable_collisions link1="link2" link2="link_b1" reason="Never" />
+    <disable_collisions link1="link3" link2="link4" reason="Adjacent" />
+    <disable_collisions link1="link3" link2="link5" reason="Never" />
+    <disable_collisions link1="link3" link2="link6" reason="Never" />
+    <disable_collisions link1="link3" link2="link_b1" reason="Never" />
+    <disable_collisions link1="link3" link2="right_hand_big_thumb_1" reason="Never" />
+    <disable_collisions link1="link3" link2="right_hand_zhuanjie_1" reason="Never" />
+    <disable_collisions link1="link3" link2="right_hand_zhuanjie_2" reason="Never" />
+    <disable_collisions link1="link4" link2="link5" reason="Adjacent" />
+    <disable_collisions link1="link4" link2="link_b1" reason="Never" />
+    <disable_collisions link1="link5" link2="link6" reason="Adjacent" />
+    <disable_collisions link1="link5" link2="link_b1" reason="Never" />
+    <disable_collisions link1="link5" link2="right_base_link" reason="Never" />
+    <disable_collisions link1="link5" link2="right_hand_big_thumb_1" reason="Never" />
+    <disable_collisions link1="link5" link2="right_hand_big_thumb_2" reason="Never" />
+    <disable_collisions link1="link5" link2="right_hand_big_thumb_3" reason="Never" />
+    <disable_collisions link1="link5" link2="right_hand_finger_shizhidown_link" reason="Never" />
+    <disable_collisions link1="link5" link2="right_hand_finger_shizhimid_link" reason="Never" />
+    <disable_collisions link1="link5" link2="right_hand_finger_shizhitop_link" reason="Never" />
+    <disable_collisions link1="link5" link2="right_hand_finger_wumingzhidown_link" reason="Never" />
+    <disable_collisions link1="link5" link2="right_hand_finger_wumingzhimid_link" reason="Never" />
+    <disable_collisions link1="link5" link2="right_hand_finger_wumingzhitop_link" reason="Never" />
+    <disable_collisions link1="link5" link2="right_hand_finger_xiaozhidown_link" reason="Never" />
+    <disable_collisions link1="link5" link2="right_hand_finger_xiaozhimid_link" reason="Never" />
+    <disable_collisions link1="link5" link2="right_hand_finger_xiaozhitop_link" reason="Never" />
+    <disable_collisions link1="link5" link2="right_hand_finger_zhongzhidown_link" reason="Never" />
+    <disable_collisions link1="link5" link2="right_hand_finger_zhongzhimid_link" reason="Never" />
+    <disable_collisions link1="link5" link2="right_hand_finger_zhongzhitop_link" reason="Never" />
+    <disable_collisions link1="link5" link2="right_hand_zhuanjie_1" reason="Never" />
+    <disable_collisions link1="link5" link2="right_hand_zhuanjie_2" reason="Never" />
+    <disable_collisions link1="link6" link2="link_b1" reason="Never" />
+    <disable_collisions link1="link6" link2="right_base_link" reason="Adjacent" />
+    <disable_collisions link1="link6" link2="right_hand_big_thumb_1" reason="Never" />
+    <disable_collisions link1="link6" link2="right_hand_big_thumb_2" reason="Never" />
+    <disable_collisions link1="link6" link2="right_hand_big_thumb_3" reason="Never" />
+    <disable_collisions link1="link6" link2="right_hand_finger_shizhidown_link" reason="Never" />
+    <disable_collisions link1="link6" link2="right_hand_finger_shizhimid_link" reason="Never" />
+    <disable_collisions link1="link6" link2="right_hand_finger_shizhitop_link" reason="Never" />
+    <disable_collisions link1="link6" link2="right_hand_finger_wumingzhidown_link" reason="Never" />
+    <disable_collisions link1="link6" link2="right_hand_finger_wumingzhimid_link" reason="Never" />
+    <disable_collisions link1="link6" link2="right_hand_finger_wumingzhitop_link" reason="Never" />
+    <disable_collisions link1="link6" link2="right_hand_finger_xiaozhidown_link" reason="Never" />
+    <disable_collisions link1="link6" link2="right_hand_finger_xiaozhimid_link" reason="Never" />
+    <disable_collisions link1="link6" link2="right_hand_finger_xiaozhitop_link" reason="Never" />
+    <disable_collisions link1="link6" link2="right_hand_finger_zhongzhidown_link" reason="Never" />
+    <disable_collisions link1="link6" link2="right_hand_finger_zhongzhimid_link" reason="Never" />
+    <disable_collisions link1="link6" link2="right_hand_finger_zhongzhitop_link" reason="Never" />
+    <disable_collisions link1="link6" link2="right_hand_zhuanjie_1" reason="Never" />
+    <disable_collisions link1="link6" link2="right_hand_zhuanjie_2" reason="Never" />
+    <disable_collisions link1="link_b1" link2="link_b2" reason="Adjacent" />
+    <disable_collisions link1="link_b1" link2="link_b3" reason="Never" />
+    <disable_collisions link1="link_b1" link2="link_base" reason="Never" />
+    <disable_collisions link1="link_b1" link2="right_base_link" reason="Never" />
+    <disable_collisions link1="link_b1" link2="right_hand_big_thumb_1" reason="Never" />
+    <disable_collisions link1="link_b1" link2="right_hand_big_thumb_2" reason="Never" />
+    <disable_collisions link1="link_b1" link2="right_hand_big_thumb_3" reason="Never" />
+    <disable_collisions link1="link_b1" link2="right_hand_finger_shizhidown_link" reason="Never" />
+    <disable_collisions link1="link_b1" link2="right_hand_finger_shizhimid_link" reason="Never" />
+    <disable_collisions link1="link_b1" link2="right_hand_finger_shizhitop_link" reason="Never" />
+    <disable_collisions link1="link_b1" link2="right_hand_finger_wumingzhidown_link" reason="Never" />
+    <disable_collisions link1="link_b1" link2="right_hand_finger_wumingzhimid_link" reason="Never" />
+    <disable_collisions link1="link_b1" link2="right_hand_finger_wumingzhitop_link" reason="Never" />
+    <disable_collisions link1="link_b1" link2="right_hand_finger_xiaozhidown_link" reason="Never" />
+    <disable_collisions link1="link_b1" link2="right_hand_finger_xiaozhimid_link" reason="Never" />
+    <disable_collisions link1="link_b1" link2="right_hand_finger_xiaozhitop_link" reason="Never" />
+    <disable_collisions link1="link_b1" link2="right_hand_finger_zhongzhidown_link" reason="Never" />
+    <disable_collisions link1="link_b1" link2="right_hand_finger_zhongzhimid_link" reason="Never" />
+    <disable_collisions link1="link_b1" link2="right_hand_finger_zhongzhitop_link" reason="Never" />
+    <disable_collisions link1="link_b1" link2="right_hand_zhuanjie_1" reason="Never" />
+    <disable_collisions link1="link_b1" link2="right_hand_zhuanjie_2" reason="Never" />
+    <disable_collisions link1="link_b2" link2="link_b3" reason="Adjacent" />
+    <disable_collisions link1="link_b2" link2="link_base" reason="Never" />
+    <disable_collisions link1="link_b3" link2="link_base" reason="Adjacent" />
+    <disable_collisions link1="right_base_link" link2="right_hand_big_thumb_1" reason="Adjacent" />
+    <disable_collisions link1="right_base_link" link2="right_hand_big_thumb_2" reason="Never" />
+    <disable_collisions link1="right_base_link" link2="right_hand_big_thumb_3" reason="User" />
+    <disable_collisions link1="right_base_link" link2="right_hand_finger_shizhidown_link" reason="Adjacent" />
+    <disable_collisions link1="right_base_link" link2="right_hand_finger_shizhimid_link" reason="Never" />
+    <disable_collisions link1="right_base_link" link2="right_hand_finger_shizhitop_link" reason="Never" />
+    <disable_collisions link1="right_base_link" link2="right_hand_finger_wumingzhidown_link" reason="Adjacent" />
+    <disable_collisions link1="right_base_link" link2="right_hand_finger_wumingzhimid_link" reason="Never" />
+    <disable_collisions link1="right_base_link" link2="right_hand_finger_wumingzhitop_link" reason="Never" />
+    <disable_collisions link1="right_base_link" link2="right_hand_finger_xiaozhidown_link" reason="Adjacent" />
+    <disable_collisions link1="right_base_link" link2="right_hand_finger_xiaozhimid_link" reason="Never" />
+    <disable_collisions link1="right_base_link" link2="right_hand_finger_xiaozhitop_link" reason="Never" />
+    <disable_collisions link1="right_base_link" link2="right_hand_finger_zhongzhidown_link" reason="Adjacent" />
+    <disable_collisions link1="right_base_link" link2="right_hand_finger_zhongzhimid_link" reason="Never" />
+    <disable_collisions link1="right_base_link" link2="right_hand_finger_zhongzhitop_link" reason="Never" />
+    <disable_collisions link1="right_base_link" link2="right_hand_zhuanjie_1" reason="Default" />
+    <disable_collisions link1="right_base_link" link2="right_hand_zhuanjie_2" reason="Default" />
+    <disable_collisions link1="right_hand_big_thumb_1" link2="right_hand_big_thumb_2" reason="Never" />
+    <disable_collisions link1="right_hand_big_thumb_1" link2="right_hand_big_thumb_3" reason="Never" />
+    <disable_collisions link1="right_hand_big_thumb_1" link2="right_hand_finger_shizhidown_link" reason="Never" />
+    <disable_collisions link1="right_hand_big_thumb_1" link2="right_hand_finger_shizhimid_link" reason="Never" />
+    <disable_collisions link1="right_hand_big_thumb_1" link2="right_hand_finger_shizhitop_link" reason="Never" />
+    <disable_collisions link1="right_hand_big_thumb_1" link2="right_hand_finger_wumingzhidown_link" reason="Never" />
+    <disable_collisions link1="right_hand_big_thumb_1" link2="right_hand_finger_wumingzhimid_link" reason="Never" />
+    <disable_collisions link1="right_hand_big_thumb_1" link2="right_hand_finger_wumingzhitop_link" reason="Never" />
+    <disable_collisions link1="right_hand_big_thumb_1" link2="right_hand_finger_xiaozhidown_link" reason="Never" />
+    <disable_collisions link1="right_hand_big_thumb_1" link2="right_hand_finger_xiaozhimid_link" reason="Never" />
+    <disable_collisions link1="right_hand_big_thumb_1" link2="right_hand_finger_xiaozhitop_link" reason="Never" />
+    <disable_collisions link1="right_hand_big_thumb_1" link2="right_hand_finger_zhongzhidown_link" reason="Never" />
+    <disable_collisions link1="right_hand_big_thumb_1" link2="right_hand_finger_zhongzhimid_link" reason="Never" />
+    <disable_collisions link1="right_hand_big_thumb_1" link2="right_hand_finger_zhongzhitop_link" reason="Never" />
+    <disable_collisions link1="right_hand_big_thumb_1" link2="right_hand_zhuanjie_1" reason="Adjacent" />
+    <disable_collisions link1="right_hand_big_thumb_1" link2="right_hand_zhuanjie_2" reason="Never" />
+    <disable_collisions link1="right_hand_big_thumb_2" link2="right_hand_big_thumb_3" reason="Adjacent" />
+    <disable_collisions link1="right_hand_big_thumb_2" link2="right_hand_finger_shizhidown_link" reason="Never" />
+    <disable_collisions link1="right_hand_big_thumb_2" link2="right_hand_finger_wumingzhidown_link" reason="Never" />
+    <disable_collisions link1="right_hand_big_thumb_2" link2="right_hand_finger_wumingzhimid_link" reason="User" />
+    <disable_collisions link1="right_hand_big_thumb_2" link2="right_hand_finger_wumingzhitop_link" reason="User" />
+    <disable_collisions link1="right_hand_big_thumb_2" link2="right_hand_finger_xiaozhidown_link" reason="Never" />
+    <disable_collisions link1="right_hand_big_thumb_2" link2="right_hand_finger_xiaozhimid_link" reason="Never" />
+    <disable_collisions link1="right_hand_big_thumb_2" link2="right_hand_finger_xiaozhitop_link" reason="Never" />
+    <disable_collisions link1="right_hand_big_thumb_2" link2="right_hand_finger_zhongzhidown_link" reason="Never" />
+    <disable_collisions link1="right_hand_big_thumb_2" link2="right_hand_finger_zhongzhimid_link" reason="User" />
+    <disable_collisions link1="right_hand_big_thumb_2" link2="right_hand_finger_zhongzhitop_link" reason="User" />
+    <disable_collisions link1="right_hand_big_thumb_2" link2="right_hand_zhuanjie_1" reason="Never" />
+    <disable_collisions link1="right_hand_big_thumb_2" link2="right_hand_zhuanjie_2" reason="Adjacent" />
+    <disable_collisions link1="right_hand_big_thumb_3" link2="right_hand_finger_shizhidown_link" reason="User" />
+    <disable_collisions link1="right_hand_big_thumb_3" link2="right_hand_finger_wumingzhidown_link" reason="User" />
+    <disable_collisions link1="right_hand_big_thumb_3" link2="right_hand_finger_wumingzhimid_link" reason="User" />
+    <disable_collisions link1="right_hand_big_thumb_3" link2="right_hand_finger_wumingzhitop_link" reason="User" />
+    <disable_collisions link1="right_hand_big_thumb_3" link2="right_hand_finger_xiaozhidown_link" reason="Never" />
+    <disable_collisions link1="right_hand_big_thumb_3" link2="right_hand_finger_xiaozhimid_link" reason="Never" />
+    <disable_collisions link1="right_hand_big_thumb_3" link2="right_hand_finger_xiaozhitop_link" reason="Never" />
+    <disable_collisions link1="right_hand_big_thumb_3" link2="right_hand_finger_zhongzhidown_link" reason="User" />
+    <disable_collisions link1="right_hand_big_thumb_3" link2="right_hand_finger_zhongzhimid_link" reason="User" />
+    <disable_collisions link1="right_hand_big_thumb_3" link2="right_hand_finger_zhongzhitop_link" reason="User" />
+    <disable_collisions link1="right_hand_big_thumb_3" link2="right_hand_zhuanjie_1" reason="Never" />
+    <disable_collisions link1="right_hand_big_thumb_3" link2="right_hand_zhuanjie_2" reason="Never" />
+    <disable_collisions link1="right_hand_finger_shizhidown_link" link2="right_hand_finger_shizhimid_link" reason="Adjacent" />
+    <disable_collisions link1="right_hand_finger_shizhidown_link" link2="right_hand_finger_shizhitop_link" reason="Never" />
+    <disable_collisions link1="right_hand_finger_shizhidown_link" link2="right_hand_finger_wumingzhidown_link" reason="Never" />
+    <disable_collisions link1="right_hand_finger_shizhidown_link" link2="right_hand_finger_wumingzhimid_link" reason="Never" />
+    <disable_collisions link1="right_hand_finger_shizhidown_link" link2="right_hand_finger_wumingzhitop_link" reason="Never" />
+    <disable_collisions link1="right_hand_finger_shizhidown_link" link2="right_hand_finger_xiaozhidown_link" reason="Never" />
+    <disable_collisions link1="right_hand_finger_shizhidown_link" link2="right_hand_finger_xiaozhimid_link" reason="Never" />
+    <disable_collisions link1="right_hand_finger_shizhidown_link" link2="right_hand_finger_xiaozhitop_link" reason="Never" />
+    <disable_collisions link1="right_hand_finger_shizhidown_link" link2="right_hand_finger_zhongzhidown_link" reason="Never" />
+    <disable_collisions link1="right_hand_finger_shizhidown_link" link2="right_hand_finger_zhongzhimid_link" reason="Never" />
+    <disable_collisions link1="right_hand_finger_shizhidown_link" link2="right_hand_finger_zhongzhitop_link" reason="Never" />
+    <disable_collisions link1="right_hand_finger_shizhidown_link" link2="right_hand_zhuanjie_1" reason="Never" />
+    <disable_collisions link1="right_hand_finger_shizhidown_link" link2="right_hand_zhuanjie_2" reason="Never" />
+    <disable_collisions link1="right_hand_finger_shizhimid_link" link2="right_hand_finger_shizhitop_link" reason="Adjacent" />
+    <disable_collisions link1="right_hand_finger_shizhimid_link" link2="right_hand_finger_wumingzhidown_link" reason="Never" />
+    <disable_collisions link1="right_hand_finger_shizhimid_link" link2="right_hand_finger_wumingzhimid_link" reason="Never" />
+    <disable_collisions link1="right_hand_finger_shizhimid_link" link2="right_hand_finger_wumingzhitop_link" reason="Never" />
+    <disable_collisions link1="right_hand_finger_shizhimid_link" link2="right_hand_finger_xiaozhidown_link" reason="Never" />
+    <disable_collisions link1="right_hand_finger_shizhimid_link" link2="right_hand_finger_xiaozhimid_link" reason="Never" />
+    <disable_collisions link1="right_hand_finger_shizhimid_link" link2="right_hand_finger_xiaozhitop_link" reason="Never" />
+    <disable_collisions link1="right_hand_finger_shizhimid_link" link2="right_hand_finger_zhongzhidown_link" reason="Never" />
+    <disable_collisions link1="right_hand_finger_shizhimid_link" link2="right_hand_zhuanjie_1" reason="Never" />
+    <disable_collisions link1="right_hand_finger_shizhimid_link" link2="right_hand_zhuanjie_2" reason="Never" />
+    <disable_collisions link1="right_hand_finger_shizhitop_link" link2="right_hand_finger_wumingzhidown_link" reason="Never" />
+    <disable_collisions link1="right_hand_finger_shizhitop_link" link2="right_hand_finger_wumingzhimid_link" reason="Never" />
+    <disable_collisions link1="right_hand_finger_shizhitop_link" link2="right_hand_finger_wumingzhitop_link" reason="Never" />
+    <disable_collisions link1="right_hand_finger_shizhitop_link" link2="right_hand_finger_xiaozhidown_link" reason="Never" />
+    <disable_collisions link1="right_hand_finger_shizhitop_link" link2="right_hand_finger_xiaozhimid_link" reason="Never" />
+    <disable_collisions link1="right_hand_finger_shizhitop_link" link2="right_hand_finger_xiaozhitop_link" reason="Never" />
+    <disable_collisions link1="right_hand_finger_shizhitop_link" link2="right_hand_finger_zhongzhidown_link" reason="Never" />
+    <disable_collisions link1="right_hand_finger_shizhitop_link" link2="right_hand_zhuanjie_1" reason="Never" />
+    <disable_collisions link1="right_hand_finger_shizhitop_link" link2="right_hand_zhuanjie_2" reason="Never" />
+    <disable_collisions link1="right_hand_finger_wumingzhidown_link" link2="right_hand_finger_wumingzhimid_link" reason="Adjacent" />
+    <disable_collisions link1="right_hand_finger_wumingzhidown_link" link2="right_hand_finger_wumingzhitop_link" reason="Never" />
+    <disable_collisions link1="right_hand_finger_wumingzhidown_link" link2="right_hand_finger_xiaozhidown_link" reason="Never" />
+    <disable_collisions link1="right_hand_finger_wumingzhidown_link" link2="right_hand_finger_xiaozhimid_link" reason="Never" />
+    <disable_collisions link1="right_hand_finger_wumingzhidown_link" link2="right_hand_finger_xiaozhitop_link" reason="Never" />
+    <disable_collisions link1="right_hand_finger_wumingzhidown_link" link2="right_hand_finger_zhongzhidown_link" reason="Never" />
+    <disable_collisions link1="right_hand_finger_wumingzhidown_link" link2="right_hand_finger_zhongzhimid_link" reason="Never" />
+    <disable_collisions link1="right_hand_finger_wumingzhidown_link" link2="right_hand_finger_zhongzhitop_link" reason="Never" />
+    <disable_collisions link1="right_hand_finger_wumingzhidown_link" link2="right_hand_zhuanjie_1" reason="Never" />
+    <disable_collisions link1="right_hand_finger_wumingzhidown_link" link2="right_hand_zhuanjie_2" reason="Never" />
+    <disable_collisions link1="right_hand_finger_wumingzhimid_link" link2="right_hand_finger_wumingzhitop_link" reason="Adjacent" />
+    <disable_collisions link1="right_hand_finger_wumingzhimid_link" link2="right_hand_finger_xiaozhidown_link" reason="Never" />
+    <disable_collisions link1="right_hand_finger_wumingzhimid_link" link2="right_hand_finger_zhongzhidown_link" reason="Never" />
+    <disable_collisions link1="right_hand_finger_wumingzhimid_link" link2="right_hand_zhuanjie_1" reason="Never" />
+    <disable_collisions link1="right_hand_finger_wumingzhimid_link" link2="right_hand_zhuanjie_2" reason="Never" />
+    <disable_collisions link1="right_hand_finger_wumingzhitop_link" link2="right_hand_finger_xiaozhidown_link" reason="Never" />
+    <disable_collisions link1="right_hand_finger_wumingzhitop_link" link2="right_hand_finger_zhongzhidown_link" reason="Never" />
+    <disable_collisions link1="right_hand_finger_wumingzhitop_link" link2="right_hand_zhuanjie_1" reason="Never" />
+    <disable_collisions link1="right_hand_finger_wumingzhitop_link" link2="right_hand_zhuanjie_2" reason="Never" />
+    <disable_collisions link1="right_hand_finger_xiaozhidown_link" link2="right_hand_finger_xiaozhimid_link" reason="Adjacent" />
+    <disable_collisions link1="right_hand_finger_xiaozhidown_link" link2="right_hand_finger_xiaozhitop_link" reason="Never" />
+    <disable_collisions link1="right_hand_finger_xiaozhidown_link" link2="right_hand_finger_zhongzhidown_link" reason="Never" />
+    <disable_collisions link1="right_hand_finger_xiaozhidown_link" link2="right_hand_finger_zhongzhimid_link" reason="Never" />
+    <disable_collisions link1="right_hand_finger_xiaozhidown_link" link2="right_hand_finger_zhongzhitop_link" reason="Never" />
+    <disable_collisions link1="right_hand_finger_xiaozhidown_link" link2="right_hand_zhuanjie_1" reason="Never" />
+    <disable_collisions link1="right_hand_finger_xiaozhidown_link" link2="right_hand_zhuanjie_2" reason="Never" />
+    <disable_collisions link1="right_hand_finger_xiaozhimid_link" link2="right_hand_finger_xiaozhitop_link" reason="Adjacent" />
+    <disable_collisions link1="right_hand_finger_xiaozhimid_link" link2="right_hand_finger_zhongzhidown_link" reason="Never" />
+    <disable_collisions link1="right_hand_finger_xiaozhimid_link" link2="right_hand_finger_zhongzhimid_link" reason="Never" />
+    <disable_collisions link1="right_hand_finger_xiaozhimid_link" link2="right_hand_finger_zhongzhitop_link" reason="Never" />
+    <disable_collisions link1="right_hand_finger_xiaozhimid_link" link2="right_hand_zhuanjie_1" reason="Never" />
+    <disable_collisions link1="right_hand_finger_xiaozhimid_link" link2="right_hand_zhuanjie_2" reason="Never" />
+    <disable_collisions link1="right_hand_finger_xiaozhitop_link" link2="right_hand_finger_zhongzhidown_link" reason="Never" />
+    <disable_collisions link1="right_hand_finger_xiaozhitop_link" link2="right_hand_finger_zhongzhimid_link" reason="Never" />
+    <disable_collisions link1="right_hand_finger_xiaozhitop_link" link2="right_hand_finger_zhongzhitop_link" reason="Never" />
+    <disable_collisions link1="right_hand_finger_xiaozhitop_link" link2="right_hand_zhuanjie_1" reason="Never" />
+    <disable_collisions link1="right_hand_finger_xiaozhitop_link" link2="right_hand_zhuanjie_2" reason="Never" />
+    <disable_collisions link1="right_hand_finger_zhongzhidown_link" link2="right_hand_finger_zhongzhimid_link" reason="Adjacent" />
+    <disable_collisions link1="right_hand_finger_zhongzhidown_link" link2="right_hand_finger_zhongzhitop_link" reason="Never" />
+    <disable_collisions link1="right_hand_finger_zhongzhidown_link" link2="right_hand_zhuanjie_1" reason="Never" />
+    <disable_collisions link1="right_hand_finger_zhongzhidown_link" link2="right_hand_zhuanjie_2" reason="Never" />
+    <disable_collisions link1="right_hand_finger_zhongzhimid_link" link2="right_hand_finger_zhongzhitop_link" reason="Adjacent" />
+    <disable_collisions link1="right_hand_finger_zhongzhimid_link" link2="right_hand_zhuanjie_1" reason="Never" />
+    <disable_collisions link1="right_hand_finger_zhongzhimid_link" link2="right_hand_zhuanjie_2" reason="Never" />
+    <disable_collisions link1="right_hand_finger_zhongzhitop_link" link2="right_hand_zhuanjie_1" reason="Never" />
+    <disable_collisions link1="right_hand_finger_zhongzhitop_link" link2="right_hand_zhuanjie_2" reason="User" />
+    <disable_collisions link1="right_hand_zhuanjie_1" link2="right_hand_zhuanjie_2" reason="Adjacent" />
+</robot>
